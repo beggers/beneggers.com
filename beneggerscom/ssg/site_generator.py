@@ -124,6 +124,7 @@ class SiteGenerator:
         for root, _, fs in os.walk(path):
             for f in fs:
                 files.append(os.path.join(root, f))
+        files.sort()
         return files
 
     def _posts_from_pages(self, url_substring: str) -> list[Page]:
@@ -155,6 +156,7 @@ class SiteGenerator:
         self._render_pages(path)
         self._flush_pages()
         self._copy_statics(path)
+        self._write_sitemap(path)
 
     def _materialize_styles(self) -> None:
         for style_name, style in self.styles.items():
@@ -167,7 +169,9 @@ class SiteGenerator:
             raise ValueError("No static directory set.")
         for static in self.statics:
             logging.debug("Copying static file %s", static)
-            shutil.copy(static, static.replace(self.static_dir, path))
+            target = static.replace(self.static_dir, path)
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            shutil.copy(static, target)
 
     def _render_pages(self, path: str) -> None:
         if not self.markdown_dir:
@@ -175,6 +179,11 @@ class SiteGenerator:
         # TODO this path and URL stuff is jacked
         for md_path, md in self.markdowns.items():
             logging.debug("Rendering markdown file %s", md_path)
+            # Skip drafts in prod builds
+            is_dev = path.endswith("_dev")
+            if md.draft and not is_dev:
+                logging.debug("Skipping draft page %s in prod build", md_path)
+                continue
             target_path = md_path.replace(
                 self.markdown_dir,
                 path
@@ -214,3 +223,22 @@ class SiteGenerator:
     def _flush_pages(self) -> None:
         for page in self.pages:
             page.flush()
+
+    def _write_sitemap(self, path: str) -> None:
+        if not self.pages:
+            return
+        urls = []
+        for page in self.pages:
+            # Only include html pages
+            if not page._path.endswith(".html"):
+                continue
+            urls.append(f"  <url>\n    <loc>{page.url}</loc>\n  </url>")
+        sitemap = (
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
+            + "\n".join(urls)
+            + "\n</urlset>\n"
+        )
+        os.makedirs(path, exist_ok=True)
+        with open(os.path.join(path, "sitemap.xml"), "w") as f:
+            f.write(sitemap)

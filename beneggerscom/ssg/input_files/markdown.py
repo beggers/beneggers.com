@@ -15,6 +15,7 @@ class MarkdownFile(InputFile):
     nav: int = -1
     description: str = ""
     content: str = ""
+    draft: bool = False
 
     @classmethod
     def from_lines(
@@ -54,7 +55,14 @@ class MarkdownFile(InputFile):
         return markdown_file
 
     def content_as_html(self) -> str:
-        return markdown.markdown(self.content, extensions=["footnotes"])
+        return markdown.markdown(
+            self.content,
+            extensions=[
+                "footnotes",
+                "fenced_code",
+                "tables",
+            ],
+        )
 
     def _set_metadata_item(self, key: str, value: str):
         if key == "title":
@@ -69,5 +77,10 @@ class MarkdownFile(InputFile):
             self.description = value
         elif key == "meta_title":
             self.meta_title = value
+        elif key == "draft":
+            v = value.lower()
+            if v not in ("true", "false"):
+                raise ValueError(f"Invalid boolean for draft: {value}")
+            self.draft = v == "true"
         else:
             raise ValueError(f"Unknown metadata key: {key}")

@@ -102,6 +102,24 @@ a.active {
     color: var(--hover);
 }
 
+pre, code, kbd, samp {
+    font-family: var(--font-monospace);
+}
+
+pre code {
+    display: block;
+    padding: 0.75rem 1rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 6px;
+    overflow-x: auto;
+}
+
+code {
+    background: rgba(255,255,255,0.05);
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+}
+
 ul {
     margin: 0 auto 1.25rem auto;
     padding-left: 2rem;

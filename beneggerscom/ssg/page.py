@@ -28,10 +28,11 @@ class EvalContext:
     eng_posts: list[Page]
     thoughts_posts: list[Page]
     page: Page
+    site: dict
     # HTML to hydrate
     slot: str
 
-    def as_dict(self) -> dict[str, str | list[Page] | Page]:
+    def as_dict(self) -> dict[str, str | list[Page] | Page | dict]:
         return {
             "base_url": self.base_url,
             "protocol": self.protocol,
@@ -40,6 +41,7 @@ class EvalContext:
             "thoughts_posts": self.thoughts_posts,
             "page": self.page,
             "slot": self.slot,
+            "site": getattr(self, "site", {}),
         }
 
 
@@ -99,6 +101,10 @@ class Page:
         eval_context.thoughts_posts = thoughts_posts
         eval_context.page = self
         eval_context.slot = self._md.content_as_html()
+        eval_context.site = {
+            "url": base_url,
+            "protocol": protocol,
+        }
 
         # TODO nested loops
         # TODO if statements

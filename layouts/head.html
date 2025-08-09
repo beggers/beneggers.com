@@ -1,10 +1,23 @@
 {% define head %}
 <title>{% page.meta_title %}</title>
-<script src="https://kit.fontawesome.com/5a53cab38d.js" crossorigin="anonymous"></script>
-<meta name="description" content="{% page.description %}">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta charset="UTF-8"/>
-<link rel="icon" type="image/x-icon" href="{% protocol %}://favicon.{% base_url %}"/>
+<script
+  src="https://kit.fontawesome.com/5a53cab38d.js"
+  crossorigin="anonymous"
+></script>
+<meta name="description" content="{% page.description %}" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8" />
+<link
+  rel="icon"
+  type="image/x-icon"
+  href="{% protocol %}://favicon.{% base_url %}"
+/>
+<link
+  rel="sitemap"
+  type="application/xml"
+  title="Sitemap"
+  href="{% protocol %}://{% base_url %}/sitemap.xml"
+/>
 {% include plausible %}
 <style>
   {% page.style %}

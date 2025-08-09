@@ -26,32 +26,43 @@ def find_file(host: str, content_dir: str) -> tuple[bytes, str]:
             if os.path.isdir(new_path):
                 new_path = os.path.join(new_path, "index.html")
         elif len(matching_files_at_path) == 2:
-            first_is_file = os.path.isfile(os.path.join(
-                new_path,
-                matching_files_at_path[0]
-            ))
-            second_is_file = os.path.isfile(os.path.join(
-                new_path,
-                matching_files_at_path[1]
-            ))
+            first_is_file = os.path.isfile(
+                os.path.join(new_path, matching_files_at_path[0])
+            )
+            second_is_file = os.path.isfile(
+                os.path.join(new_path, matching_files_at_path[1])
+            )
             if first_is_file and second_is_file:
-                raise ValueError(
-                    f"Two files with the same name in the same directory: {matching_files_at_path}"
+                msg = (
+                    "Two files with the same name in the same directory: "
+                    f"{matching_files_at_path}"
                 )
+                raise ValueError(msg)
             if not first_is_file and not second_is_file:
-                raise ValueError(
-                    f"Two directories with the same name in the same directory: {matching_files_at_path}"
+                msg = (
+                    "Two directories with the same name in the same "
+                    "directory: "
+                    f"{matching_files_at_path}"
                 )
+                raise ValueError(msg)
             if first_is_file:
                 new_path = os.path.join(new_path, matching_files_at_path[0])
             else:
-                new_path = os.path.join(new_path, matching_files_at_path[1])
+                new_path = os.path.join(
+                    new_path, matching_files_at_path[1]
+                )
         else:
-            raise ValueError(
-                f"More than two files with the same name in the same directory: {matching_files_at_path}"
+            msg = (
+                "More than two files with the same name in the same "
+                "directory: "
+                f"{matching_files_at_path}"
             )
+            raise ValueError(msg)
 
         path = new_path
 
     with open(path, "rb") as f:
-        return f.read(), "html"
+        _, ext = os.path.splitext(path)
+        # Strip leading dot and lowercase for mime lookup
+        ext = ext[1:].lower() if ext.startswith(".") else ext.lower()
+        return f.read(), ext or "html"

@@ -19,7 +19,8 @@ def _set_up_and_test_files(files_and_routes: dict):
     for filename in files_and_routes:
         b, t = find_file(files_and_routes[filename], tmpdir.name)
         assert b == filename.encode()
-        assert t == "html"
+        expected_ext = filename.split(".")[-1]
+        assert t == expected_ext
 
 
 def test_find_index_implicit():
