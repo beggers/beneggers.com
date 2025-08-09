@@ -1,4 +1,4 @@
-import markdown
+from beneggerscom.ssg.markdown import str_to_html
 
 from beneggerscom.utils.config import CONFIG
 from beneggerscom.ssg.input_files import InputFile
@@ -19,8 +19,8 @@ class MarkdownFile(InputFile):
 
     @classmethod
     def from_lines(
-        _cls, lines: list[str], base_site_title: str = "Ben Eggers dot com"
-    ):
+        _cls: type["MarkdownFile"], lines: list[str], base_site_title: str = "Ben Eggers dot com"
+    ) -> "MarkdownFile":
         markdown_file = MarkdownFile()
         logging.debug("Read lines %s", lines)
         if lines[0].strip() != "---":
@@ -55,16 +55,9 @@ class MarkdownFile(InputFile):
         return markdown_file
 
     def content_as_html(self) -> str:
-        return markdown.markdown(
-            self.content,
-            extensions=[
-                "footnotes",
-                "fenced_code",
-                "tables",
-            ],
-        )
+        return str_to_html(self.content)
 
-    def _set_metadata_item(self, key: str, value: str):
+    def _set_metadata_item(self, key: str, value: str) -> None:
         if key == "title":
             self.title = value
         elif key == "date":

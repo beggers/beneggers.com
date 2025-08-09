@@ -4,11 +4,12 @@ from beneggerscom.ssg.markdown import (
     _process_italics,
     _process_links,
     _process_paragraphs_and_lists,
+    str_to_html,
 )
 
 
 def _assert_equals_ignore_whitespace(a: str, b: str) -> None:
-    assert ''.join(a.split()) == ''.join(b.split())
+    assert "".join(a.split()) == "".join(b.split())
 
 
 def test_process_headings_no_headings():
@@ -417,6 +418,53 @@ Non-italic text
 #         _process_paragraphs_and_lists(text),
 #         expected
 #     )
+
+
+def test_footnote_single_in_paragraph():
+    md = """
+This is a sentence with a footnote[^1].
+
+[^1]: This is the footnote.
+""".strip()
+    html = str_to_html(md)
+    expected = (
+        '<div class="para-with-footnote">'
+        '<p>This is a sentence with a footnote<sup class="fn-ref">1</sup>.</p>'
+        '<aside class="footnote">'
+        "<ol><li>This is the footnote.</li></ol></aside>"
+        "</div>"
+    )
+    _assert_equals_ignore_whitespace(html, expected)
+
+
+def test_footnote_multiple_refs_in_one_paragraph():
+    md = """
+Text with two refs[^a] and again[^a] plus another[^b].
+
+[^a]: First footnote body.
+[^b]: Second footnote body.
+""".strip()
+    html = str_to_html(md)
+    # The paragraph should have numbered refs in order of first appearance:
+    # a=1, b=2
+    assert html.count('<sup class="fn-ref">1</sup>') == 2
+    assert html.count('<sup class="fn-ref">2</sup>') == 1
+    assert "First footnote body." in html
+    assert "Second footnote body." in html
+
+
+def test_footnote_in_list_item():
+    md = """
+- List item with footnote[^x]
+
+[^x]: Footnote in list item.
+""".strip()
+    html = str_to_html(md)
+    # Ensure wrapper is inside the list item
+    assert "<ul>" in html and "</ul>" in html
+    li_start = html.find("<li>")
+    wrapper_pos = html.find('<div class="para-with-footnote">')
+    assert li_start != -1 and wrapper_pos != -1 and wrapper_pos > li_start
 
 
 # def test_ordered_list_multiple_paragraphs_in_item():
