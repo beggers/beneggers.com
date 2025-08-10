@@ -10,6 +10,16 @@ body {
   margin: 0; padding: 64px 16px 80px;
   background: var(--bg); color: var(--text);
 }
+body::after {
+    content: "";
+    position: fixed;
+    bottom: 20px; right: 20px;
+    width: 40px; height: 40px;
+    background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"%23aaa\"><path d=\"M12 0L15 8H24L17 13L20 21L12 16L4 21L7 13L0 8H9z\"/></svg>') no-repeat center/contain;
+    opacity: 0.25;
+    pointer-events: none;
+    transform: rotate(15deg);
+  }
 main { max-width: 70ch; margin: 0 auto; }
 
 /* Homepage header text */
