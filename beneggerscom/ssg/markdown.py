@@ -7,10 +7,19 @@ from typing import Dict, List, Optional, Tuple, Match
 
 BOLD_REGEX = r"\*\*(.*?)\*\*|__([^_]*?)__"
 HEADER_REGEX = r"^(#+)\s(.+)"
-ITALICS_REGEX = r"\*(.*?)\*|_([^_]*?)_"
-# Allow single-level parentheses in URLs: sequences of non-paren chars or one
-# pair of parentheses without nesting
-LINK_REGEX = r"\[([^\]]+)\]\(((?:[^()\s]+|\([^()\s]*\))+?)\)"
+# Italics should not span across HTML tags or angle brackets to avoid
+# consuming large portions of already-rendered HTML. Also avoid matching
+# when immediately adjacent to whitespace.
+ITALICS_REGEX = r"\*(?!\s)([^*<>]+?)(?<!\s)\*|_(?!\s)([^_<>]+?)(?<!\s)_"
+# Allow links with template tags inside the URL. Permit sequences of:
+# - a template tag like `{% ... %}` (which may contain spaces)
+# - non-paren, non-space chars
+# - or a single-level parenthesized group without nesting
+LINK_REGEX = (
+    r"\[([^\]]+)\]\("
+    r"((?:\{%\s.*?%\}|[^()\s]+|\([^()\s]*\))+?)"
+    r"\)"
+)
 FOOTNOTE_DEF_REGEX = r"^\[\^([^\]]+)\]:\s*(.*)$"
 FOOTNOTE_REF_REGEX = r"\[\^([^\]]+)\]"
 
@@ -22,9 +31,12 @@ def str_to_html(raw_md: str) -> str:
 
     html = _process_headings(content_wo_fns)
     html = _process_paragraphs_and_lists(html, footnotes)
+    # Protect inline code by running it last; earlier steps should not touch
+    # backticked content thanks to _sub_outside_code.
     html = _process_links(html)
     html = _process_bolds(html)
     html = _process_italics(html)
+    html = _process_inline_code(html)
     return html
 
 
@@ -50,14 +62,66 @@ def _process_italics(raw_md: str) -> str:
     def replace_with_em(match: Match[str]) -> str:
         return f"<em>{match.group(1) or match.group(2)}</em>"
 
-    return re.sub(ITALICS_REGEX, replace_with_em, raw_md)
+    return _sub_outside_code(ITALICS_REGEX, replace_with_em, raw_md)
+
+
+def _escape_code(s: str) -> str:
+    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def _process_inline_code(raw_md: str) -> str:
+    # Replace `code` with <code>code</code> and escape HTML-sensitive chars
+    def repl(m: Match[str]) -> str:
+        return f"<code>{_escape_code(m.group(1))}</code>"
+
+    return re.sub(r"`([^`]+)`", repl, raw_md)
 
 
 def _process_links(raw_md: str) -> str:
     def replace_with_a(match: Match[str]) -> str:
         return f'<a href="{match.group(2)}">{match.group(1)}</a>'
 
-    return re.sub(LINK_REGEX, replace_with_a, raw_md)
+    return _sub_outside_code(LINK_REGEX, replace_with_a, raw_md)
+
+
+def _split_code_regions(s: str) -> list[tuple[str, bool]]:
+    # Returns a list of (segment, is_code) alternating text and code segments
+    segments: list[tuple[str, bool]] = []
+    i = 0
+    buf: list[str] = []
+    while i < len(s):
+        if s[i] == "`":
+            # Flush accumulated non-code
+            if buf:
+                segments.append(("".join(buf), False))
+                buf = []
+            # Consume backtick
+            i += 1
+            code_buf: list[str] = []
+            while i < len(s) and s[i] != "`":
+                code_buf.append(s[i])
+                i += 1
+            # Skip closing backtick if present
+            if i < len(s) and s[i] == "`":
+                i += 1
+            segments.append(("".join(code_buf), True))
+            continue
+        buf.append(s[i])
+        i += 1
+    if buf:
+        segments.append(("".join(buf), False))
+    return segments
+
+
+def _sub_outside_code(pattern: str, repl, s: str) -> str:
+    # Apply regex replacements only to segments outside inline code
+    out: list[str] = []
+    for seg, is_code in _split_code_regions(s):
+        if is_code:
+            out.append("`" + seg + "`")
+        else:
+            out.append(re.sub(pattern, repl, seg))
+    return "".join(out)
 
 
 def _extract_footnotes(raw_md: str) -> Tuple[str, Dict[str, str]]:
@@ -119,6 +183,9 @@ def _process_paragraphs_and_lists(
     # Each element is (indent_level, "ul" or "ol")
     list_stack: list[Tuple[int, str]] = []
     in_list_item: bool = False
+    in_code_block: bool = False
+    code_lang: Optional[str] = None
+    code_lines: List[str] = []
 
     # Accumulate the current paragraph's text so we can post-process footnotes
     current_paragraph_chunks: List[str] = []
@@ -247,6 +314,34 @@ def _process_paragraphs_and_lists(
 
     for line in lines:
         stripped = line.strip()
+
+        # Handle fenced code blocks ```lang ... ```
+        fence_start = re.match(r"^```\s*([A-Za-z0-9_+-]+)?\s*$", line)
+        if not in_code_block and fence_start:
+            close_paragraph()
+            close_all_lists()
+            in_code_block = True
+            code_lang = fence_start.group(1)
+            code_lines = []
+            continue
+
+        if in_code_block:
+            if re.match(r"^```\s*$", line):
+                # Flush code block
+                lang_class = (
+                    f' class="language-{code_lang}"' if code_lang else ""
+                )
+                output_lines.append(
+                    f"<pre><code{lang_class}>"
+                    + _escape_code("\n".join(code_lines))
+                    + "</code></pre>"
+                )
+                in_code_block = False
+                code_lang = None
+                code_lines = []
+            else:
+                code_lines.append(line)
+            continue
 
         if stripped.startswith("<h"):
             close_paragraph()

@@ -22,6 +22,42 @@ body::after {
   }
 main { max-width: 70ch; margin: 0 auto; }
 
+/* Reserve a thin band at the top of every page to avoid layout shift.
+   The band remains empty on the homepage. */
+main.with-top-band {
+  display: grid;
+  grid-template-rows: 32px auto; /* thin row for nav, then content */
+  row-gap: 0;
+}
+
+.top-band {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid transparent; /* preserve height without visual weight */
+  margin-bottom: 10px; /* add breathing room before the page title */
+}
+
+.top-band .back-link {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+}
+.top-band .back-link:hover { color: var(--link); text-decoration: underline; }
+
+/* When there is a back link, give the band a subtle divider */
+main.with-top-band .top-band:has(.back-link) {
+  border-bottom-color: var(--hairline);
+}
+/* Reserve space for the fixed back-nav when it exists to avoid content shift */
+main + .site-footer,
+main { margin-top: 0; }
+
+/* On pages with back-nav, add top padding equal to its height */
+body:has(nav.back-nav) main {
+  padding-top: 40px; /* equals back-nav link vertical padding + border */
+}
+
 /* Homepage header text */
 .name { font-size: clamp(28px, 5vw, 44px); line-height: 1.15; margin: 0 0 8px; font-weight: 700; letter-spacing: -0.01em; }
 .tag { margin: 0 0 20px; color: var(--muted); font-size: 0.95rem; }
@@ -34,6 +70,8 @@ li { padding: 0px 0; border-top: 1px solid var(--hairline); }
 li:first-child { border-top: none; }
 .item-title { font-weight: 600; }
 .item-note { color: var(--muted); font-size: 0.95rem; }
+
+/* Remove old fixed nav styles */
 
 /* Small screen tweaks */
 @media (max-width: 420px) {

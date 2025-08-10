@@ -75,3 +75,28 @@ output "sitemap_cert_validation_record" {
   value = module.sitemap.cert_validation_record
 }
 
+
+output "non_breaking_spaces_technical_bites_cloudfront_distribution_id" {
+  value = module.non_breaking_spaces_technical_bites.cloudfront_distribution_id
+}
+
+output "non_breaking_spaces_technical_bites_hosted_zone_id" {
+  value = module.non_breaking_spaces_technical_bites.hosted_zone_id
+}
+
+output "non_breaking_spaces_technical_bites_bucket_id" {
+  value = module.non_breaking_spaces_technical_bites.bucket_id
+}
+
+output "non_breaking_spaces_technical_bites_bucket_regional_domain_name" {
+  value = module.non_breaking_spaces_technical_bites.bucket_regional_domain_name
+}
+
+output "non_breaking_spaces_technical_bites_cert_arn" {
+  value = module.non_breaking_spaces_technical_bites.cert_arn
+}
+
+output "non_breaking_spaces_technical_bites_cert_validation_record" {
+  value = module.non_breaking_spaces_technical_bites.cert_validation_record
+}
+

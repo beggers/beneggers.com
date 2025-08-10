@@ -6,7 +6,7 @@ layout: _default.html
 nav: 1
 ---
 
-I like to build software. I also like to play my trumpet, hike (PCT&nbsp;'22), meditate, lift weights, travel, and do anything with my friends. In past phases of life I have been a therapist and, separately, a Mandarin-English translator. I currently work on infrastructure at [OpenAI](https://www.openai.com).
+I like to build software. I also like to play my trumpet, hike (PCT&nbsp;'22), meditate, lift weights, travel, and do anything with my friends. In past phases of life I have been a therapist and separately a Mandarin-English translator. I currently work on infrastructure at [OpenAI](https://www.openai.com).
 
 This website has no paths; every asset (every page, every script, the favicon) has its own subdomain. This was a lot of work but, on the other hand, makes the site much slower and have worse SEO.
 
@@ -15,3 +15,7 @@ You can email me at (first name) at (this domain) or yell at me on [Twitter](htt
 ## Talks
 
 - [You should test in production](https://www.youtube.com/watch?v=1v4r0aEE6Zs) — BugBash 2025
+
+## Technical bites
+
+- [Non-breaking spaces]({% protocol %}://non-breaking-spaces.technical-bites.{% base_url %}) — Aug 2025

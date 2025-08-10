@@ -4,6 +4,7 @@ from beneggerscom.ssg.markdown import (
     _process_italics,
     _process_links,
     _process_paragraphs_and_lists,
+    _process_inline_code,
     str_to_html,
 )
 
@@ -344,6 +345,69 @@ def test_links_integration_with_bold():
     md = "Para [link](x) with **bold**"
     expected = '<p>Para <a href="x">link</a> with <strong>bold</strong></p>'
     _assert_equals_ignore_whitespace(str_to_html(md), expected)
+
+
+def test_inline_code_basic():
+    expected = "Use <code>code</code> here"
+    assert _process_inline_code("Use `code` here") == expected
+
+
+def test_inline_code_escapes_html_chars():
+    assert (
+        _process_inline_code("`<div>&</div>`")
+        == "<code>&lt;div&gt;&amp;&lt;/div&gt;</code>"
+    )
+
+
+def test_fenced_code_block_basic():
+    md = """
+```
+line 1
+<div>
+line 2 & more
+```
+""".strip()
+    expected = "<pre><code>line 1\n&lt;div&gt;\nline 2 &amp; more</code></pre>"
+    _assert_equals_ignore_whitespace(str_to_html(md), expected)
+
+
+def test_fenced_code_block_with_language():
+    md = """
+```python
+print('hi')
+```
+""".strip()
+    expected = "<pre><code class=\"language-python\">print('hi')</code></pre>"
+    _assert_equals_ignore_whitespace(str_to_html(md), expected)
+
+
+def test_links_not_parsed_inside_inline_code():
+    md = "This is not a link: `[x](https://example.com)`"
+    expected = (
+        "<p>This is not a link: <code>[x](https://example.com)</code></p>"
+    )
+    _assert_equals_ignore_whitespace(str_to_html(md), expected)
+
+
+def test_italics_not_parsed_inside_inline_code():
+    md = "Inline `*not italic*` remains code"
+    expected = "<p>Inline <code>*not italic*</code> remains code</p>"
+    _assert_equals_ignore_whitespace(str_to_html(md), expected)
+
+
+def test_italics_does_not_span_html_or_template_vars():
+    # Regression: an underscore in one href and another underscore later inside
+    # a template variable in a different link should not create an <em> span
+    # across HTML or corrupt the template variable name.
+    md = (
+        "Text [Twitter](https://x.com/beggers_) and "
+        "[Local]({% protocol %}://non-breaking-spaces.technical-bites."
+        "{% base_url %})"
+    )
+    html = str_to_html(md)
+    assert "<em>" not in html and "</em>" not in html
+    assert 'href="https://x.com/beggers_"' in html
+    assert "{% base_url %}" in html
 
 
 def test_paragraphs_single_line():

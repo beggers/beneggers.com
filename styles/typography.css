@@ -43,7 +43,24 @@ a:visited { color: var(--link-visited); }
 
 /* Code */
 pre code {
-  display: block; padding: 0.75rem 1rem; background: rgba(0,0,0,0.04);
-  border-radius: 6px; overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  display: block;
+  padding: 0.75rem 1rem;
+  background: rgba(0,0,0,0.04);
+  border-radius: 6px;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  white-space: pre; /* preserve exactly as written in blocks */
 }
-code { background: rgba(0,0,0,0.04); padding: 0.1rem 0.3rem; border-radius: 4px; }
+
+/* Inline code should look good and render exactly as written */
+code {
+  background: rgba(0,0,0,0.04);
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.95em; /* sit nicely within paragraph line-height */
+  white-space: pre-wrap; /* preserve spaces and allow wrapping */
+  font-variant-ligatures: none; /* avoid transforming sequences like != */
+  font-feature-settings: "liga" 0;
+  tab-size: 2;
+}
