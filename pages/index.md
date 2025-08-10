@@ -6,7 +6,7 @@ layout: _default.html
 nav: 1
 ---
 
-I like to build things. I also like to play my trumpet, hike (PCT&nbsp;'22), meditate, lift weights, travel, and do anything with my friends. I currently work on infrastructure at [OpenAI](https://www.openai.com).
+I like to build software. I also like to play my trumpet, hike (PCT&nbsp;'22), meditate, lift weights, travel, and do anything with my friends. In past phases of life I have been a therapist and, separately, a Mandarin-English translator. I currently work on infrastructure at [OpenAI](https://www.openai.com).
 
 You can email me at (first name) at (this domain) or yell at me on [Twitter](https://x.com/beggers_).
 
