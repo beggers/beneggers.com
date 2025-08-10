@@ -7,16 +7,34 @@ body {
 
 /* Headings */
 h2 {
-  font-size: 0.95rem;
+  font-size: 1.10rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  margin: 0 0 8px;
+  margin: 0 0 .8rem;
   color: var(--muted);
 }
 
+/* Consistent pre-heading spacing (1.5x paragraph spacing) */
+main h1,
+main h2 {
+  margin-top: 1.6rem;
+}
+
+/* Do not push the primary page title down */
+main > header h1 {
+  margin-top: 0;
+}
+
+/* Subtitle beneath page title */
+.subtitle {
+  color: var(--muted);
+  font-size: 1rem;
+  margin: -1rem 0 1.6rem 0; /* 1.5x paragraph spacing before first paragraph */
+}
+
 /* Paragraphs */
-p { margin: 0 0 1rem 0; }
+p { margin: 0 0 0.8rem 0; }
 
 /* Links */
 a { color: var(--link); text-decoration: none; }

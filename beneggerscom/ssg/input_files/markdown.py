@@ -7,8 +7,8 @@ import logging
 
 
 class MarkdownFile(InputFile):
-    # TODO
     title: str = ""
+    subtitle: str = ""
     date: str = ""
     meta_title: str = ""
     layout: str = CONFIG["default_layout"]
@@ -19,7 +19,9 @@ class MarkdownFile(InputFile):
 
     @classmethod
     def from_lines(
-        _cls: type["MarkdownFile"], lines: list[str], base_site_title: str = "Ben Eggers dot com"
+        _cls: type["MarkdownFile"],
+        lines: list[str],
+        base_site_title: str = "Ben Eggers dot com",
     ) -> "MarkdownFile":
         markdown_file = MarkdownFile()
         logging.debug("Read lines %s", lines)
@@ -40,7 +42,7 @@ class MarkdownFile(InputFile):
         logging.debug("markdown_file after metadata ingest: %s", markdown_file)
 
         # Add one because the start index is inclusive
-        markdown_file.content = "\n".join(lines[metadata_end + 1:])
+        markdown_file.content = "\n".join(lines[metadata_end + 1 :])
 
         if not markdown_file.title:
             raise ValueError(f"No title for file. Parsed {markdown_file}")
@@ -60,6 +62,8 @@ class MarkdownFile(InputFile):
     def _set_metadata_item(self, key: str, value: str) -> None:
         if key == "title":
             self.title = value
+        elif key == "subtitle":
+            self.subtitle = value
         elif key == "date":
             self.date = value
         elif key == "layout":

@@ -48,6 +48,7 @@ class EvalContext:
 class Page:
     nav: int = -1
     title: str
+    subtitle: str
     date: str
     display_date: str
     meta_title: str
@@ -60,13 +61,14 @@ class Page:
     _layout: LayoutFile
     _path: str
 
-    def __init__(self,
-                 md: MarkdownFile,
-                 layout: LayoutFile,
-                 url: str,
-                 style: str,
-                 path: str
-                 ):
+    def __init__(
+        self,
+        md: MarkdownFile,
+        layout: LayoutFile,
+        url: str,
+        style: str,
+        path: str,
+    ):
         self._md = md
         self._layout = layout
         self._rendered_content = layout.content
@@ -74,6 +76,7 @@ class Page:
 
         self.nav = md.nav
         self.title = md.title
+        self.subtitle = getattr(md, "subtitle", "")
         self.date = md.date
         # Just month year
         if md.date:
@@ -85,14 +88,15 @@ class Page:
         self.url = url
         self.style = style
 
-    def render(self,
-               base_url: str,
-               protocol: str,
-               partials: dict[str, LayoutFile],
-               pages: list[Page],
-               eng_posts: list[Page] = [],
-               thoughts_posts: list[Page] = [],
-               ) -> None:
+    def render(
+        self,
+        base_url: str,
+        protocol: str,
+        partials: dict[str, LayoutFile],
+        pages: list[Page],
+        eng_posts: list[Page] = [],
+        thoughts_posts: list[Page] = [],
+    ) -> None:
         eval_context = EvalContext()
         eval_context.base_url = base_url
         eval_context.protocol = protocol
@@ -127,8 +131,7 @@ class Page:
             if partial_name not in partials:
                 raise ValueError(f"Partial '{partial_name}' not found.")
             rendered = rendered.replace(
-                include.group(0),
-                partials[partial_name].content
+                include.group(0), partials[partial_name].content
             )
             include = LAYOUT_INCLUDE_REGEX.search(rendered)
 
@@ -152,16 +155,16 @@ class Page:
                 )
             logging.debug("Rendering if-statement %s", if_match.group(0))
             cond = if_match.group("cond")
-            if_content = rendered[if_match.end(): if_end.start()]
+            if_content = rendered[if_match.end() : if_end.start()]
             logging.debug("If content: %s", if_content)
 
             rendered_body = ""
             if eval(cond, eval_variables):
                 rendered_body = if_content
             rendered = (
-                rendered[:if_match.start()]
+                rendered[: if_match.start()]
                 + rendered_body
-                + rendered[if_end.end():]
+                + rendered[if_end.end() :]
             )
 
             if_match = IF_START_REGEX.search(rendered)
@@ -190,7 +193,7 @@ class Page:
             logging.debug("Rendering for loop %s", for_match.group(0))
             var = for_match.group("var")
             iterable = for_match.group("iter")
-            loop_content = rendered[for_match.end(): loop_end.start()]
+            loop_content = rendered[for_match.end() : loop_end.start()]
             logging.debug("Loop content: %s", loop_content)
 
             rendered_loop = ""
@@ -215,7 +218,7 @@ class Page:
             rendered = (
                 rendered[: for_match.start()]
                 + rendered_loop
-                + rendered[loop_end.end():]
+                + rendered[loop_end.end() :]
             )
 
             for_match = FOR_START_REGEX.search(rendered, loop_end.end())
