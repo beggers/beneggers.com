@@ -4,28 +4,9 @@
     {% include head %}
   </head>
   <body>
-    <div class="page-body">
-      {% include nav-sidebar %}
-      <section class="content">
-        <h1 class="page-title">{% page.title %}</h1>
-
-        {% if page.display_date %}
-        <h2 class="page-subtitle">{% page.display_date %}</h2>
-        {% end if %}
-
-        {% slot %}
-
-        {% if page.title.lower() == "engineering" %}
-        {% include engineering %}
-        {% end if %}
-
-        {% if page.title.lower() == "thoughts" %}
-        {% include thoughts %}
-        {% end if %}
-      </section>
-      <footer class="page-footer">
-        {% include footer %}
-      </footer>
-    </div>
+    <main>
+      {% slot %}
+      <footer>{% include footer %}</footer>
+    </main>
   </body>
 </html>

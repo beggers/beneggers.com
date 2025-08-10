@@ -4,26 +4,36 @@
     {% include head %}
   </head>
   <body>
-    <div class="page-body">
-      {% include nav-sidebar %}
-      <section class="content">
-        <h1 class="page-title">The Ben Eggers Fun and Silly Online Experience™</h1>
-        {% include home-subtitle %}
-        <p>
-            Hi! My name is Ben Eggers. I'm also known as beggers and (sometimes) cantbechoosers.
+    <main>
+      <header>
+        <h1 class="name">Ben Eggers</h1>
+        <p class="tag">Software engineer</p>
+        <p class="bio">
+          I like to build things. I also like to play my trumpet, hike (PCT
+          '22), meditate, lift weights, travel, and do anything with my friends.
+          I currently work on infrastructure at
+          <a href="https://www.openai.com">OpenAI</a>.
         </p>
-        <figure>
-            <img src="{% protocol %}://claire-and-the-bens.{% base_url %}">
-            <figcaption>Me (left) with two of my best friends: <a href="https://www.sexclarified.com/">Claire</a> (center) and Other Ben (right).</figcaption>
-        </figure>
         <p>
-            I like to hike (PCT '22), lift weights, meditate, make music, throw and attend weird parties, and cook for my friends. In past chapters of life I have been a therapist and, separately, a Mandarin/English transalator. These days I sell my labor to <a href="https://openai.com">OpenAI</a>, where I am a Member of Technical Staff.
+          You can email me at (first name) at (this domain) or yell at me on
+          <a href="https://x.com/beggers_">Twitter</a>.
         </p>
-        </figure>
+      </header>
+
+      <section id="talks">
+        <h2>Talks</h2>
+        <ul>
+          <li>
+            <div class="item-title">
+              <a href="https://www.youtube.com/watch?v=1v4r0aEE6Zs"
+                >You should test in production</a
+              >
+            </div>
+            <div class="item-note">BugBash 2025</div>
+          </li>
+        </ul>
       </section>
-      <footer class="page-footer">
-        {% include footer %}
-      </footer>
-    </div>
+      <footer>{% include footer %}</footer>
+    </main>
   </body>
 </html>

@@ -1,3 +1,5 @@
-.footnote {
-    grid-column: 3;
-}
+/* Footnote layout used by markdown renderer */
+.para-with-footnote { display: grid; grid-template-columns: 1fr minmax(auto, 48ch); gap: 12px; align-items: start; }
+.footnote { color: var(--muted); font-size: 0.9rem; }
+.footnote ol { margin: 0; padding-left: 1.2rem; }
+@media (max-width: 720px) { .para-with-footnote { display: block; } }

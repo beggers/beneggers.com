@@ -1,9 +1,16 @@
 :root {
-    --bg: #161616;
-    --main-text: #d5d5d5;
-    --muted-text: #b8b8b8;
-    --header: #a7d2b1;
-    /* TODO */
-    --highlight: var(--header);
-    --hover: var(--header);
+  /* Primary palette */
+  --bg: #f7f7f5;          /* warm off‑white */
+  --text: #111113;        /* near-black */
+  --muted: #4a4a4f;       /* cool gray */
+  --link: #0a53b5;        /* calm blue for links */
+  --link-visited: #5a3ea1;
+  --hairline: #e7e7e3;
+
+  /* Compatibility with legacy names used in older CSS files */
+  --main-text: var(--text);
+  --muted-text: var(--muted);
+  --header: var(--text);
+  --highlight: var(--link);
+  --hover: var(--link);
 }

@@ -1,6 +1,6 @@
 {% define footer %}
 <p class="footer">
-  &copy; Ben Eggers 2025
+  &copy; <span id="y"></span> Ben Eggers.
   <a href="https://github.com/beggers/beneggers.com" target="_blank"
     ><i class="fa-brands fa-github"></i
   ></a>
@@ -8,4 +8,12 @@
     ><i class="fa-brands fa-x-twitter"></i
   ></a>
 </p>
+<script>
+  (function () {
+    var el = document.getElementById("y");
+    if (el) {
+      el.textContent = new Date().getFullYear();
+    }
+  })();
+</script>
 {% end footer %}

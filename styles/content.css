@@ -1,4 +1,31 @@
-.content {
-    grid-row: 2;
-    grid-column: 2;
+/* Layout and page structure */
+* { box-sizing: border-box; }
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body {
+  margin: 0; padding: 64px 16px 80px;
+  background: var(--bg); color: var(--text);
+}
+main { max-width: 70ch; margin: 0 auto; }
+
+/* Homepage header text */
+.name { font-size: clamp(28px, 5vw, 44px); line-height: 1.15; margin: 0 0 8px; font-weight: 700; letter-spacing: -0.01em; }
+.tag { margin: 0 0 20px; color: var(--muted); font-size: 0.95rem; }
+.bio { font-size: 1.05rem; margin: 18px 0 28px; }
+
+/* Sections and lists */
+section { padding: 20px 0; }
+ul { list-style: none; padding: 0; margin: 0; }
+li { padding: 10px 0; border-top: 1px solid var(--hairline); }
+li:first-child { border-top: none; }
+.item-title { font-weight: 600; }
+.item-note { color: var(--muted); font-size: 0.95rem; }
+
+/* Small screen tweaks */
+@media (max-width: 420px) {
+  body { padding: 44px 14px 64px; }
 }

@@ -1,20 +1,8 @@
-footer {
-    color: var(--muted-text);
-    grid-column: 2;
-    grid-row: 3;
-}
-
-@media (max-width: 868px) {
-    footer {
-        margin: 0 auto 0 auto;
-    }
-}
-
-footer p {
-    margin: 0;
-    text-align: center;
-}
-
-svg {
-    margin-left: 0.1rem;
+footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--hairline); color: var(--muted); font-size: 0.9rem; }
+footer p { margin: 0; }
+footer a,
+footer a:visited,
+footer a:hover,
+footer a:active {
+  color: #111113; /* force black for icons/links */
 }

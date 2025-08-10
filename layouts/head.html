@@ -22,4 +22,53 @@
 <style>
   {% page.style %}
 </style>
+<script>
+  (function () {
+    function isInternal(url) {
+      try {
+        var u = new URL(url, window.location.href);
+        var h = u.hostname;
+        var base = "{% base_url %}";
+        return (
+          h === base ||
+          h.endsWith("." + base) ||
+          h === "beneggers.com" ||
+          h.endsWith(".beneggers.com") ||
+          h === "localhost" ||
+          h.endsWith(".localhost") ||
+          h === "localhost.com" ||
+          h.endsWith(".localhost.com")
+        );
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function isHttp(href) {
+      return href.indexOf("http://") === 0 || href.indexOf("https://") === 0;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      document.querySelectorAll("a[href]").forEach(function (a) {
+        var href = a.getAttribute("href");
+        if (
+          !href ||
+          href[0] === "#" ||
+          href.indexOf("mailto:") === 0 ||
+          href.indexOf("tel:") === 0
+        )
+          return;
+        var absolute = isHttp(href);
+        var internal = isInternal(href);
+        if (absolute && !internal) {
+          a.setAttribute("target", "_blank");
+          a.setAttribute("rel", "noopener noreferrer");
+        } else {
+          a.removeAttribute("target");
+          a.removeAttribute("rel");
+        }
+      });
+    });
+  })();
+</script>
 {% end head %}

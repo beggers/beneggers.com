@@ -1,38 +1,5 @@
 @import 'colors.css';
+@import 'typography.css';
 @import 'content.css';
 @import 'footer.css';
 @import 'footnote.css';
-@import 'navigation.css';
-@import 'page-title.css';
-@import 'post-list.css';
-@import 'typography.css';
-
-html {
-    margin: 1rem auto;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    background-color: var(--bg);
-    color: var(--main-text);
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-}
-
-img {
-    max-width: 100%;
-}
-
-.page-body {
-    display: grid;
-    grid-template-columns: 1fr minmax(auto, 60ch) 1fr;
-    grid-template-rows: 2rem auto 5%;
-    gap: 10px;
-    height: 100vh;
-
-    justify-content: center;
-    overflow-wrap: break-word;
-}

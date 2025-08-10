@@ -1,152 +1,31 @@
-:root {
-    --font-monospace: "Fira Mono", monospace;
-    --font: "Fira"
-}
-
+/* Base typography */
 body {
-    font-family: var(--font);
-    font-size: 20px;
-    line-height: 1.7rem;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial;
+  font-size: 16px;
+  line-height: 1.6;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    font-size: 1.25rem;
-    margin: 1.25rem 0 0 0;
-    font-weight: 600;
-    color: var(--header);
+/* Headings */
+h2 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 8px;
+  color: var(--muted);
 }
 
-h1+h2,
-h1+h3,
-h1+h4,
-h1+h5,
-h1+h6,
-h2+h3,
-h2+h4,
-h2+h5,
-h2+h6,
-h3+h4,
-h3+h5,
-h3+h6,
-h4+h5,
-h4+h6,
-h5+h6 {
-    margin: 0;
-}
+/* Paragraphs */
+p { margin: 0 0 1rem 0; }
 
-h1:before {
-    content: "# ";
-}
+/* Links */
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:visited { color: var(--link-visited); }
 
-h2:before {
-    content: "## ";
-}
-
-h3:before {
-    content: "### ";
-}
-
-h4:before {
-    content: "#### ";
-}
-
-h5:before {
-    content: "##### ";
-}
-
-h6:before {
-    content: "###### ";
-}
-
-h1:before,
-h2:before,
-h3:before,
-h4:before,
-h5:before,
-h6:before {
-    color: var(--muted-text);
-}
-
-h1:first-child {
-    margin-top: 0;
-}
-
-hr {
-    display: none;
-}
-
-p {
-    margin: 0 0 1.25rem 0;
-    max-width: 60ch;
-}
-
-@media (max-width: 868px) {
-    p {
-        margin: 0 auto 1.25rem auto;
-    }
-}
-
-a:link,
-a:visited {
-    color: var(--header);
-}
-
-a:hover,
-a:active,
-a.active {
-    color: var(--hover);
-}
-
-pre, code, kbd, samp {
-    font-family: var(--font-monospace);
-}
-
+/* Code */
 pre code {
-    display: block;
-    padding: 0.75rem 1rem;
-    background: rgba(255,255,255,0.05);
-    border-radius: 6px;
-    overflow-x: auto;
+  display: block; padding: 0.75rem 1rem; background: rgba(0,0,0,0.04);
+  border-radius: 6px; overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
-
-code {
-    background: rgba(255,255,255,0.05);
-    padding: 0.1rem 0.3rem;
-    border-radius: 4px;
-}
-
-ul {
-    margin: 0 auto 1.25rem auto;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    max-width: 55ch;
-}
-
-ol {
-    margin: 0 0 1.25rem 0;
-    padding-left: 3.75rem;
-}
-
-ul ul,
-ul ol,
-ol ul,
-ol ol {
-    max-width: 60ch;
-}
-
-ul li::marker {
-    content: '\2192\00A0';
-    color: var(--muted-text);
-}
-
-figcaption {
-    font-size: 0.9rem;
-    color: var(--muted-text);
-    text-align: center;
-    margin: 0 0 1.25rem 0;
-}
+code { background: rgba(0,0,0,0.04); padding: 0.1rem 0.3rem; border-radius: 4px; }
