@@ -8,7 +8,9 @@ from typing import Dict, List, Optional, Tuple, Match
 BOLD_REGEX = r"\*\*(.*?)\*\*|__([^_]*?)__"
 HEADER_REGEX = r"^(#+)\s(.+)"
 ITALICS_REGEX = r"\*(.*?)\*|_([^_]*?)_"
-LINK_REGEX = r"\[([^\]]+)\]\(([^)]+)\)"
+# Allow single-level parentheses in URLs: sequences of non-paren chars or one
+# pair of parentheses without nesting
+LINK_REGEX = r"\[([^\]]+)\]\(((?:[^()\s]+|\([^()\s]*\))+?)\)"
 FOOTNOTE_DEF_REGEX = r"^\[\^([^\]]+)\]:\s*(.*)$"
 FOOTNOTE_REF_REGEX = r"\[\^([^\]]+)\]"
 
@@ -206,18 +208,23 @@ def _process_paragraphs_and_lists(
             current_paragraph_chunks = []
             in_paragraph = True
 
-    def start_list_item() -> None:
+    def start_list_item(close_current: bool = True) -> None:
         nonlocal in_list_item
-        close_list_item()
+        if close_current:
+            close_list_item()
         output_lines.append("<li>")
         in_list_item = True
 
     def close_lists_down_to(indent_level: int) -> None:
-        nonlocal list_stack
+        nonlocal list_stack, in_list_item
         while list_stack and list_stack[-1][0] > indent_level:
             close_list_item()
             _, ltype = list_stack.pop()
             output_lines.append(f"</{ltype}>")
+            # We popped a nested list; we're now back inside the parent list
+            # item that contained it (if any remains on the stack)
+            if list_stack:
+                in_list_item = True
 
     def detect_list_item(line: str) -> Optional[Tuple[int, str, str]]:
         spaces = 0
@@ -236,6 +243,8 @@ def _process_paragraphs_and_lists(
                 return spaces, "ol", m.group(1)
         return None
 
+    prev_was_blank: bool = False
+
     for line in lines:
         stripped = line.strip()
 
@@ -250,6 +259,7 @@ def _process_paragraphs_and_lists(
                 close_paragraph()
             else:
                 close_paragraph()
+            prev_was_blank = True
             continue
 
         list_item_info = detect_list_item(line)
@@ -263,10 +273,12 @@ def _process_paragraphs_and_lists(
                 start_list_item()
             else:
                 if current_indent > list_stack[-1][0]:
+                    # Open a nested list inside the current list item without
+                    # closing the parent <li>
                     close_paragraph()
                     output_lines.append(f"<{list_type}>")
                     list_stack.append((current_indent, list_type))
-                    start_list_item()
+                    start_list_item(close_current=False)
                 else:
                     close_lists_down_to(current_indent)
                     if list_stack and list_stack[-1][1] != list_type:
@@ -282,24 +294,54 @@ def _process_paragraphs_and_lists(
             if list_content.strip():
                 start_paragraph()
                 current_paragraph_chunks.append(list_content.strip())
+            prev_was_blank = False
         else:
             if list_stack:
-                if not in_list_item:
-                    close_all_lists()
-                    start_paragraph()
-                    current_paragraph_chunks.append(stripped)
-                else:
+                # Compute leading spaces to decide context relative to list
+                leading_spaces = 0
+                for ch in line:
+                    if ch == " ":
+                        leading_spaces += 1
+                    else:
+                        break
+                if in_list_item and not prev_was_blank:
+                    # Continuation of current list item paragraph
                     if not in_paragraph:
                         start_paragraph()
                     else:
                         current_paragraph_chunks.append(" ")
                     current_paragraph_chunks.append(stripped)
+                else:
+                    if prev_was_blank:
+                        # After a blank line, if dedenting to the current
+                        # list level or less, end the list; otherwise treat as
+                        # a new paragraph inside the current list item.
+                        if leading_spaces <= list_stack[-1][0]:
+                            close_all_lists()
+                            start_paragraph()
+                            current_paragraph_chunks.append(stripped)
+                        else:
+                            start_paragraph()
+                            current_paragraph_chunks.append(stripped)
+                    elif leading_spaces <= list_stack[-1][0]:
+                        # Dedented out of the list: close lists and start new
+                        # paragraph
+                        close_all_lists()
+                        start_paragraph()
+                        current_paragraph_chunks.append(stripped)
+                    else:
+                        # Indented content outside a list item: treat as
+                        # paragraph
+                        start_paragraph()
+                        current_paragraph_chunks.append(stripped)
+                prev_was_blank = False
             else:
                 if not in_paragraph:
                     start_paragraph()
                 else:
                     current_paragraph_chunks.append(" ")
                 current_paragraph_chunks.append(stripped)
+                prev_was_blank = False
 
     close_paragraph()
     close_all_lists()
