@@ -36,15 +36,3 @@ module "sitemap" {
   source_hash    = filemd5("../public/sitemap.xml")
   zone_id        = aws_route53_zone.main.zone_id
 }
-
-module "non_breaking_spaces_technical_bites" {
-  source = "./zone_deployment"
-
-  content_type   = "text/html"
-  domain_aliases = []
-  file           = "non-breaking-spaces.html"
-  file_directory = "../public/technical-bites/"
-  fqdn           = "non-breaking-spaces.technical-bites.${var.domainName}"
-  source_hash    = filemd5("../public/technical-bites/non-breaking-spaces.html")
-  zone_id        = aws_route53_zone.main.zone_id
-}

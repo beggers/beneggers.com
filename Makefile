@@ -29,6 +29,14 @@ clear-caches:
 
 # Dev stuff
 
+.PHONY: js-dev
+js-dev:
+	cd web && OUT_DIR=../public_dev ./node_modules/.bin/vite build --watch
+
+.PHONY: js-prod
+js-prod:
+	cd web && npm run build
+
 .PHONY: continuous-test
 continuous-test:
 	find . | grep -v public | grep -v -e "^\./\." | entr -d pytest
@@ -41,8 +49,12 @@ dev-clean:
 dev-content: dev-clean
 	python3 -m beneggerscom.ssg.main --dev
 
+.PHONY: dev-js-once
+dev-js-once:
+	cd web && OUT_DIR=../public_dev ./node_modules/.bin/vite build
+
 .PHONY: server
-server: dev-content
+server: dev-content dev-js-once
 	python3 -m beneggerscom.dev_server.main
 
 .PHONY: only-server

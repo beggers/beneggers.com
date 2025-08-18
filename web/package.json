@@ -1,0 +1,16 @@
+{
+  "name": "beneggers-web",
+  "private": true,
+  "version": "0.1.0",
+  "description": "JS/TS (one bundle per page)",
+  "scripts": {
+    "build": "OUT_DIR=../public vite build",
+    "build:dev": "OUT_DIR=../public_dev vite build --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "vite": "^5.3.0"
+  }
+}
+
+

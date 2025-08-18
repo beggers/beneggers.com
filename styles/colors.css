@@ -7,6 +7,9 @@
   --link-visited: #5a3ea1;
   --hairline: #e7e7e3;
 
+  /* Surfaces */
+  --container: #ffffff;   /* bright white surface for panels/canvases */
+
   /* Compatibility with legacy names used in older CSS files */
   --main-text: var(--text);
   --muted-text: var(--muted);

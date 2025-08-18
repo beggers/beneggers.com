@@ -15,7 +15,3 @@ You can email me at (first name) at (this domain) or yell at me on [Twitter](htt
 ## Talks
 
 - [You should test in production](https://www.youtube.com/watch?v=1v4r0aEE6Zs) — BugBash 2025
-
-## Technical bites
-
-- [Non-breaking spaces]({% protocol %}://non-breaking-spaces.technical-bites.{% base_url %}) — Aug 2025
