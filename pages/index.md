@@ -4,6 +4,7 @@ subtitle: Software engineer
 meta_title: _base
 layout: _default.html
 nav: 1
+description: Software engineer and builder. Personal site with writing, talks, and contact info.
 ---
 
 I like to build software. I also like to play my trumpet, hike (PCT&nbsp;'22), meditate, lift weights, travel, and do anything with my friends. In past phases of life I have been a therapist and separately a Mandarin-English translator. I currently work on infrastructure at [OpenAI](https://www.openai.com).
